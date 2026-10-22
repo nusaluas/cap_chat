@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CapChat v1.0 - PUNK EDITION</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --punk-yellow: #ffea00; 
+            --punk-pink: #ff0055; 
+            --punk-green: #00ff66; 
+            --punk-black: #0a0a0a;
+            --punk-dark: #141414;
+        }
+        
+        body { 
+            font-family: 'Space Mono', monospace; 
+            background-color: var(--punk-black); 
+            color: #ffffff; 
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-image: 
+                radial-gradient(rgba(255, 0, 85, 0.1) 1px, transparent 0),
+                radial-gradient(rgba(255, 234, 0, 0.07) 1px, transparent 0);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+        }
+
+        .font-punk-title { font-family: 'Black Ops One', system-ui; letter-spacing: 0.04em; }
+        .font-stencil { font-family: 'Black Ops One', system-ui; letter-spacing: 0.03em; }
+        .font-zine { font-family: 'Space Mono', monospace; font-weight: 700; }
+
+        .punk-card {
+            background: var(--punk-dark);
+            border: 3px solid var(--punk-yellow);
+            box-shadow: 6px 6px 0px var(--punk-pink);
+            position: relative;
+        }
+
+        .punk-card-pink {
+            background: var(--punk-dark);
+            border: 3px solid var(--punk-pink);
+            box-shadow: 6px 6px 0px var(--punk-yellow);
+        }
+
+        .punk-btn-yellow {
+            background: var(--punk-yellow);
+            color: #000;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px var(--punk-pink);
+            font-family: 'Black Ops One', system-ui;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+        }
+        .punk-btn-yellow:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--punk-pink);
+            background: #fff;
+        }
+        .punk-btn-yellow:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px var(--punk-pink);
+        }
+
+        .punk-btn-pink {
+            background: var(--punk-pink);
+            color: #fff;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px var(--punk-yellow);
+            font-family: 'Black Ops One', system-ui;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+        }
+        .punk-btn-pink:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--punk-yellow);
+            background: #ff2a70;
+        }
+        .punk-btn-pink:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px var(--punk-yellow);
+        }
+
+        .punk-btn-green {
+            background: var(--punk-green);
+            color: #000;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px #000;
+            font-family: 'Black Ops One', system-ui;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .punk-btn-green:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--punk-yellow);
+        }
+
+        .hazard-strip {
+            background: repeating-linear-gradient(
+                -45deg,
+                var(--punk-yellow),
+                var(--punk-yellow) 12px,
+                #000 12px,
+                #000 24px
+            );
+            height: 10px;
+            width: 100%;
+            border-bottom: 2px solid #000;
+        }
+
+        .hazard-strip-pink {
+            background: repeating-linear-gradient(
+                -45deg,
+                var(--punk-pink),
+                var(--punk-pink) 12px,
+                #000 12px,
+                #000 24px
+            );
+            height: 10px;
+            width: 100%;
+        }
+
+        .view-panel { display: none; }
+        .view-panel.active { display: flex; flex-direction: column; height: 100vh; }
+
+        .avatar-option {
+            border: 2px solid #333;
+            background: #000;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+        .avatar-option:hover {
+            border-color: var(--punk-yellow);
+            transform: translateY(-2px);
+        }
+        .avatar-option.selected {
+            border: 3px solid var(--punk-green);
+            background: #1a1a1a;
+            box-shadow: 3px 3px 0px var(--punk-pink);
+            transform: scale(1.05);
+        }
+
+        .avatar-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #000;
+            background: #141414;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; border-left: 2px solid #222; }
+        ::-webkit-scrollbar-thumb { background: var(--punk-pink); border: 1px solid #000; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--punk-yellow); }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 240px;
+            margin: 0 auto;
+            height: 120px;
+        }
+    </style>
+</head>
+<body class="min-h-screen select-none">
+
+    <!-- MODAL DIALOG KUSTOM (PENGGANTI ALERT/CONFIRM) -->
+    <div id="punk-dialog-modal" class="fixed inset-0 bg-black/90 z-[200] hidden items-center justify-center p-4">
+        <div class="punk-card w-full max-w-md overflow-hidden">
+            <div class="hazard-strip"></div>
+            <div class="p-6 text-center">
+                <div id="dialog-icon" class="text-4xl mb-3">⚠️</div>
+                <h3 id="dialog-title" class="text-xl font-punk-title text-[#ffea00] uppercase mb-2">PERINGATAN</h3>
+                <p id="dialog-message" class="text-xs font-zine text-white leading-relaxed mb-6 whitespace-pre-line"></p>
+                <div id="dialog-actions" class="flex gap-3 justify-center">
+                    <button id="dialog-cancel-btn" class="hidden flex-1 py-3 bg-neutral-800 text-white border-2 border-white font-stencil text-xs uppercase hover:bg-neutral-700">BATAL</button>
+                    <button id="dialog-ok-btn" class="flex-1 py-3 punk-btn-yellow text-xs uppercase">MENGERTI</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL GANTI AVATAR PROFIL -->
+    <div id="avatar-modal" class="fixed inset-0 bg-black/90 z-[150] hidden items-center justify-center p-4">
+        <div class="punk-card-pink w-full max-w-lg overflow-hidden">
+            <div class="hazard-strip-pink"></div>
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4 border-b-2 border-[#ffea00] pb-2">
+                    <h3 class="text-lg font-punk-title text-[#ffea00] uppercase">PILIH AVATAR IDENTITAS</h3>
+                    <button onclick="closeAvatarModal()" class="text-white hover:text-[#ff0055] font-punk-title text-lg">✕</button>
+                </div>
+                <p class="text-[11px] font-zine text-neutral-300 mb-4 uppercase">Pilih lambang jalanan untuk identitas profilmu di jaringan:</p>
+                <div id="modal-avatar-grid" class="grid grid-cols-4 sm:grid-cols-4 gap-3 mb-6">
+                    <!-- Diisi lewat JS -->
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeAvatarModal()" class="flex-1 py-3 bg-neutral-900 border-2 border-neutral-600 text-neutral-300 font-stencil text-xs uppercase">BATAL</button>
+                    <button onclick="saveNewAvatar()" class="flex-1 py-3 punk-btn-green text-xs uppercase">SIMPAN AVATAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PASSWORD ADMIN / OVERLORD -->
+    <div id="admin-modal" class="fixed inset-0 bg-black/90 z-[120] hidden items-center justify-center p-4">
+        <div class="punk-card w-full max-w-sm overflow-hidden">
+            <div class="hazard-strip"></div>
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-[#ff0055] border-2 border-black mx-auto mb-4 flex items-center justify-center text-3xl shadow-[4px_4px_0_#ffea00]">
+                    👑
+                </div>
+                <h3 class="text-2xl font-punk-title text-[#ffea00] uppercase mb-1">OTORITAS OVERLORD</h3>
+                <p class="text-[10px] text-neutral-400 uppercase tracking-widest mb-6 font-zine">MASUKKAN KODE ENKRIPSI PUSAT</p>
+                <input type="password" id="admin-password-input" placeholder="••••••••" class="w-full p-3.5 bg-black border-2 border-[#ffea00] text-center font-zine tracking-[0.4em] text-[#ffea00] focus:outline-none focus:border-[#00ff66] mb-6 text-base">
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="closeAdminModal()" class="py-3 bg-neutral-900 border-2 border-neutral-600 text-neutral-300 font-stencil uppercase text-xs hover:text-white">BATAL</button>
+                    <button onclick="confirmAdminAccess()" class="py-3 punk-btn-pink text-xs uppercase">VERIFIKASI</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DRAWER DAFTAR KRU (MOBILE) -->
+    <div id="mobile-crew-drawer" class="fixed inset-0 bg-black/90 z-[110] hidden flex-col">
+        <div class="hazard-strip"></div>
+        <div class="p-4 bg-[#141414] border-b-2 border-[#ffea00] flex justify-between items-center">
+            <span class="font-punk-title text-[#ffea00] text-base uppercase">🏴 DAFTAR KRU JARINGAN</span>
+            <button onclick="toggleMobileCrew(false)" class="px-3 py-1 bg-[#ff0055] text-white font-stencil text-xs border-2 border-black">TUTUP ✕</button>
+        </div>
+        <div id="mobile-user-list-container" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#0a0a0a]"></div>
+    </div>
+
+    <!-- 2. LOGIN VIEW -->
+    <div id="view-login" class="view-panel active items-center justify-center p-4 overflow-y-auto">
+        <div class="punk-card w-full max-w-md my-auto overflow-hidden">
+            <div class="hazard-strip"></div>
+            <div class="p-6 sm:p-8">
+                <div class="inline-block bg-[#ff0055] text-white font-stencil text-[10px] px-2.5 py-1 border-2 border-black uppercase mb-3 shadow-[3px_3px_0_#ffea00]">
+                    UNDERGROUND ZINE COMMS v1.0
+                </div>
+                <h1 class="text-4xl sm:text-5xl font-punk-title text-[#ffea00] tracking-wider uppercase mb-1">CAP_CHAT</h1>
+                <p class="text-[11px] text-neutral-300 uppercase tracking-widest mb-5 font-zine">JARINGAN ANARKI TERENKRIPSI</p>
+
+                <!-- PILIH AVATAR SAAT LOGIN -->
+                <div class="mb-4 text-left">
+                    <label class="block text-[10px] font-stencil text-[#00ff66] uppercase tracking-wider mb-2">
+                        1. PILIH AVATAR PROFIL PUNX:
+                    </label>
+                    <div id="login-avatar-grid" class="grid grid-cols-4 gap-2">
+                        <!-- Diisi otomatis oleh JavaScript -->
+                    </div>
+                </div>
+
+                <!-- INPUT NICKNAME & PASSWORD -->
+                <div class="space-y-3 text-left">
+                    <div>
+                        <label class="block text-[10px] font-stencil text-[#ffea00] uppercase tracking-wider mb-1">
+                            2. ALIAS / NAMA JALANAN:
+                        </label>
+                        <input type="text" id="login-username" placeholder="CONTOH: SID_99" maxlength="18" class="w-full p-3 bg-black border-2 border-[#ffea00] text-white font-zine uppercase text-sm focus:outline-none focus:border-[#00ff66]">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-[10px] font-stencil text-[#ff0055] uppercase tracking-wider">
+                                3. SANDI RAHASIA (PERMANEN):
+                            </label>
+                            <button type="button" onclick="togglePassVisibility()" id="toggle-pass-btn" class="text-[10px] font-zine text-[#00ff66] underline uppercase">LIHAT</button>
+                        </div>
+                        <input type="password" id="login-password" placeholder="MINIMAL 4 KARAKTER" class="w-full p-3 bg-black border-2 border-[#ff0055] text-white font-zine text-sm focus:outline-none focus:border-[#ffea00]">
+                        <p class="text-[9px] text-neutral-400 font-zine mt-1 leading-tight">
+                            *Sandi pertama kali akan mengunci akunmu secara permanen agar tidak bisa dibajak orang lain.
+                        </p>
+                    </div>
+
+                    <div id="login-error" class="hidden p-3 bg-[#ff0055] border-2 border-black text-white text-[11px] font-zine uppercase"></div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <button onclick="handleLoginAttempt('MEMBER')" id="btn-login-member" class="py-3.5 punk-btn-yellow text-xs uppercase">
+                            STREET PUNX 🎸
+                        </button>
+                        <button onclick="handleLoginAttempt('ADMIN')" id="btn-login-admin" class="py-3.5 punk-btn-pink text-xs uppercase">
+                            OVERLORD 👑
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MAIN CHAT VIEW -->
+    <div id="view-chat" class="view-panel h-screen">
+        <div class="hazard-strip"></div>
+        <!-- HEADER -->
+        <header class="p-3 sm:px-6 bg-[#141414] border-b-3 border-[#ffea00] flex justify-between items-center z-10">
+            <div class="flex items-center gap-3">
+                <!-- Avatar Profil Pengguna Aktif (Klik untuk ganti) -->
+                <button onclick="openAvatarModal()" title="Klik untuk ganti Avatar" class="relative group">
+                    <div id="active-user-avatar" class="w-12 h-12 rounded-none border-2 border-[#ffea00] bg-black flex items-center justify-center shadow-[3px_3px_0_#ff0055] overflow-hidden"></div>
+                    <span class="absolute -bottom-1 -right-1 bg-[#00ff66] text-black font-stencil text-[8px] px-1 border border-black">EDIT</span>
+                </button>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span id="active-user-display" class="text-base sm:text-lg font-punk-title text-[#ffea00] uppercase"></span>
+                        <span id="role-badge" class="text-[9px] font-stencil px-2 py-0.5 border border-black uppercase"></span>
+                    </div>
+                    <div class="text-[10px] font-zine text-neutral-400 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-[#00ff66] inline-block border border-black"></span>
+                        <span>RIWAYAT PERMANEN AKTIF</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Tombol Kru Mobile -->
+                <button onclick="toggleMobileCrew(true)" class="lg:hidden px-3 py-2 punk-btn-yellow text-[10px] uppercase">
+                    🏴 KRU (<span id="mobile-online-count">0</span>)
+                </button>
+                <!-- Tombol Ganti Avatar -->
+                <button onclick="openAvatarModal()" class="hidden sm:inline-block px-3 py-2 bg-neutral-900 border-2 border-[#00ff66] text-[#00ff66] font-stencil text-[10px] uppercase hover:bg-[#00ff66] hover:text-black transition-colors">
+                    🎭 AVATAR
+                </button>
+                <!-- Tombol Keluar -->
+                <button onclick="clearSession()" class="px-3 py-2 bg-[#ff0055] text-white border-2 border-black font-stencil text-[10px] uppercase shadow-[3px_3px_0_#000] hover:bg-red-700">
+                    CABUT ✖
+                </button>
+            </div>
+        </header>
+
+        <div class="flex flex-1 overflow-hidden">
+            <!-- SIDEBAR DESKTOP -->
+            <aside class="w-80 border-r-2 border-[#ffea00] bg-[#0f0f0f] flex-col hidden lg:flex">
+                <div class="p-4 border-b-2 border-neutral-800 flex justify-between items-center bg-[#181818]">
+                    <span class="text-xs font-punk-title text-[#ffea00] uppercase">🏴 DAFTAR KRU PUNX</span>
+                    <div class="flex items-center gap-1.5 bg-black px-2.5 py-1 border border-[#00ff66]">
+                        <span class="w-2 h-2 bg-[#00ff66]"></span>
+                        <span id="online-count" class="text-[#00ff66] text-xs font-zine">0</span>
+                    </div>
+                </div>
+
+                <!-- Panel Statistik Admin -->
+                <div id="admin-chart-panel" class="hidden p-4 border-b-2 border-neutral-800 bg-black/50">
+                    <div class="chart-container">
+                        <canvas id="loadChart"></canvas>
+                    </div>
+                    <p class="text-center text-[10px] text-[#00ff66] mt-2 font-stencil uppercase">RADAR KRU AKTIF</p>
+                </div>
+
+                <div id="user-list-container" class="flex-1 overflow-y-auto p-3 space-y-2.5">
+                    <!-- Daftar User + Avatar -->
+                </div>
+            </aside>
+
+            <!-- AREA CHAT UTAMA -->
+            <main class="flex-1 flex flex-col relative bg-[#0a0a0a]">
+                <!-- OVERLAY BANNED / KICKED -->
+                <div id="kick-overlay" class="hidden absolute inset-0 bg-black z-50 flex flex-col items-center justify-center p-8 text-center">
+                    <div class="hazard-strip-pink mb-6"></div>
+                    <div class="text-6xl sm:text-7xl mb-4 font-punk-title text-[#ff0055] uppercase">BANNED!</div>
+                    <h2 class="text-2xl font-punk-title text-[#ffea00] uppercase mb-3">AKSES JARINGAN DIPUTUS</h2>
+                    <p class="text-neutral-300 text-xs max-w-md uppercase font-zine leading-relaxed mb-8">
+                        OVERLORD TELAH MENCABUT HAK AKSES IDENTITAS INI DARI JARINGAN CAP_CHAT SECARA PERMANEN.
+                    </p>
+                    <button onclick="clearSession()" class="px-8 py-4 punk-btn-yellow text-xs uppercase">KEMBALI KE GERBANG</button>
+                </div>
+
+                <!-- SUB-HEADER RUANG CHAT & KONTROL ARSIP -->
+                <div class="p-3 sm:px-6 bg-[#141414] border-b-2 border-neutral-800 flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] text-neutral-400 font-stencil uppercase">SALURAN:</span>
+                        <span id="current-room-name" class="text-xs sm:text-sm font-punk-title text-[#00ff66] uppercase">📢 PANGGUNG UTAMA (GLOBAL)</span>
+                    </div>
+
+                    <!-- Kontrol Arsip Member & Akses Penuh Overlord -->
+                    <div class="flex items-center gap-2">
+                        <span id="overlord-archive-badge" class="hidden text-[10px] bg-[#ff0055] text-white px-2 py-1 border border-black font-stencil uppercase">
+                            👁️ OVERLORD: SEMUA ARSIP TERBUKA
+                        </span>
+                        <button id="btn-toggle-archive" onclick="toggleShowArchived()" class="px-2.5 py-1 bg-neutral-900 border border-[#ffea00] text-[#ffea00] font-zine text-[10px] uppercase hover:bg-[#ffea00] hover:text-black">
+                            📦 LIHAT ARSIP (<span id="archived-count">0</span>)
+                        </button>
+                        <button id="btn-archive-channel" onclick="archiveCurrentChannelMessages()" class="px-2.5 py-1 bg-neutral-900 border border-[#00ff66] text-[#00ff66] font-zine text-[10px] uppercase hover:bg-[#00ff66] hover:text-black" title="Sembunyikan pesan lama di perangkatmu untuk hemat memori">
+                            📥 ARSIPKAN LAYAR
+                        </button>
+                    </div>
+                </div>
+
+                <!-- DISPLAY PESAN -->
+                <div id="messages-display" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+                    <!-- Pesan + Avatar dirender di sini -->
+                </div>
+
+                <!-- INPUT PESAN -->
+                <div class="p-4 bg-[#141414] border-t-3 border-[#ffea00]">
+                    <div id="replying-box" class="hidden text-xs text-[#ffea00] font-zine mb-3 uppercase flex justify-between items-center bg-black p-2.5 border-2 border-[#ff0055]">
+                        <span>🎯 JALUR PRIVAT KE: <strong id="reply-name" class="text-[#00ff66] underline"></strong></span>
+                        <button onclick="cancelReply()" class="px-2 py-0.5 bg-[#ff0055] text-white font-stencil text-[10px]">KE GLOBAL ✕</button>
+                    </div>
+                    <div class="flex gap-2 sm:gap-3 items-center">
+                        <input type="text" id="chat-input" onkeydown="if(event.key==='Enter') sendMessage()" placeholder="KETIK TRANSMISI JALANAN DI SINI..." class="flex-grow p-3.5 bg-black border-2 border-[#ffea00] text-sm font-zine text-white focus:outline-none focus:border-[#00ff66]">
+                        <button onclick="sendMessage()" id="send-btn" class="px-6 py-3.5 punk-btn-yellow text-xs uppercase tracking-wider">
+                            KIRIM ⚡
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // --- KONFIGURASI SERVER & KUNCI ---
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw9L0JIrs_MYyejIsujoTY7BnowIp8vDjnyDv_hRgIWJBRADOea89BGJSbjP0maJQRf/exec";
+        const ADMIN_KEY = "admin12345";
+
+        // --- DAFTAR AVATAR PUNK (INLINE SVG TAJAM & JELAS) ---
+        const PUNK_AVATARS = [
+            {
+                id: 'mohawk',
+                name: 'MOHAWK',
+                bg: '#ff0055',
+                svg: `<svg viewBox="0 0 64 64" class="w-full h-full"><rect width="64" height="64" fill="#ff0055"/><path d="M28 4 L36 4 L40 22 L24 22 Z" fill="#00ff66" stroke="#000" stroke-width="3"/><circle cx="32" cy="36" r="14" fill="#ffea00" stroke="#000" stroke-width="3"/><rect x="22" y="30" width="20" height="6" fill="#000"/><circle cx="27" cy="43" r="2" fill="#000"/><path d="M26 44 L38 44" stroke="#000" stroke-width="3"/></svg>`
+            },
+            {
+                id: 'skull',
+                name: 'SKULL',
+                bg: '#ffea00',
+                svg: `<svg viewBox="0 0 64 64" class="w-full h-full"><rect width="64" height="64" fill="#ffea00"/><path d="M16 30 C16 16, 48 16, 48 30 C48 38, 42 42, 42 48 L22 48 C22 42, 16 38, 16 30 Z" fill="#fff" stroke="#000" stroke-width="3"/><circle cx="25" cy="31" r="4" fill="#000"/><circle cx="39" cy="31" r="4" fill="#000"/><path d="M26 48 L26 54 M32 48 L32 54 M38 48 L38 54" stroke="#000" stroke-width="3"/></svg>`
+            },
+            {
+                id: 'gasmask',
+                name: 'HAZMAT',
+                bg: '#00ff66',
+                svg: `<svg viewBox="0 0 64 64" class="w-full h-full"><rect width="64" height="64" fill="#00ff66"/><circle cx="32" cy="32" r="16" fill="#141414" stroke="#000" stroke-width="3"/><circle cx="25" cy="28" r="5" fill="#ffea00" stroke="#000" stroke-width="2"/><circle cx="39" cy="28" r="5" fill="#ffea00" stroke="#000" stroke-width="2"/><rect x="26" y="38" width="12" height="10" fill="#ff0055" stroke="#000" stroke-width="2"/></svg>`
+            },
+            {
+                id: 'anarchy',
+                name: 'REBEL-A',
+                bg: '#141414',
+                svg: `<svg viewBox="0 0 64 64" class="w-full h-full"><rect width="64" height="64" fill="#141414"/><circle cx="32" cy="32" r="20" fill="none" stroke="#ff0055" stroke-width="5"/><path d="M32 10 L16 52 M32 10 L48 52 M14 36 L50 32" stroke="#ffea00" stroke-width="5" stroke-linecap="square"/></svg>`
+            },
+            {
+                id: 'chainsaw',
+                name: 'CYBER-X',
+                bg: '#00ffff',
+                svg: `<svg viewBox="0 0 64 64" class="w-full h-full"><rect width="64" height="64" fill="#00e5ff"/><rect x="16" y="16" width="32" height="32" fill="#141414" stroke="#000" stroke-width="3"/><path d="M20 28 L44 28" stroke="#ff0055" stroke-width="5"/><rect x="24" y="38" width="16" height="4" fill="#ffea00"/></svg>`
+            },
+            {
+                id: 'boombox',
+                name: 'RIOT-BOX',
+                bg: '#ff6600',
+                svg: `<svg viewBox="0 0 64 64" class="w-full h-full"><rect width="64" height="64" fill="#ff6600"/><rect x="10" y="22" width="44" height="26" fill="#141414" stroke="#000" stroke-width="3"/><circle cx="22" cy="35" r="7" fill="#ffea00" stroke="#000" stroke-width="2"/><circle cx="42" cy="35" r="7" fill="#ffea00" stroke="#000" stroke-width="2"/><path d="M22 22 L22 14 L42 14 L42 22" fill="none" stroke="#000" stroke-width="3"/></svg>`
+            },
+            {
+                id: 'spiked',
+                name: 'SPIKES',
+                bg: '#9900ff',
+                svg: `<svg viewBox="0 0 64 64" class="w-full h-full"><rect width="64" height="64" fill="#9900ff"/><polygon points="32,6 26,20 38,20" fill="#ffea00" stroke="#000" stroke-width="2"/><polygon points="16,12 18,24 26,18" fill="#ffea00" stroke="#000" stroke-width="2"/><polygon points="48,12 46,24 38,18" fill="#ffea00" stroke="#000" stroke-width="2"/><circle cx="32" cy="36" r="14" fill="#fff" stroke="#000" stroke-width="3"/><circle cx="27" cy="34" r="3" fill="#ff0055"/><circle cx="37" cy="34" r="3" fill="#ff0055"/><path d="M25 43 L39 43" stroke="#000" stroke-width="3"/></svg>`
+            },
+            {
+                id: 'crown',
+                name: 'OVERLORD',
+                bg: '#ffea00',
+                svg: `<svg viewBox="0 0 64 64" class="w-full h-full"><rect width="64" height="64" fill="#ffea00"/><polygon points="12,46 16,20 26,32 32,16 38,32 48,20 52,46" fill="#ff0055" stroke="#000" stroke-width="3"/><rect x="12" y="46" width="40" height="6" fill="#000"/></svg>`
+            }
+        ];
+
+        // --- STATE APLIKASI ---
+        let session = JSON.parse(localStorage.getItem('cyber_chat_session')) || null;
+        let selectedAvatarId = (session && session.avatar) ? session.avatar : PUNK_AVATARS[0].id;
+        let modalTempAvatarId = selectedAvatarId;
+        let selectedRecipient = "GLOBAL";
+        let isSyncing = false;
+        let loadChart = null;
+        let showArchivedMessages = false;
+
+        // Penyimpanan Lokal: Brankas Password, Avatar Kru, Daftar Banned, & Arsip Pesan
+        let authVault = JSON.parse(localStorage.getItem('punk_auth_vault')) || {};
+        let avatarDirectory = JSON.parse(localStorage.getItem('punk_avatar_dir')) || {};
+        let localBannedUsers = new Set(JSON.parse(localStorage.getItem('punk_banned_users')) || []);
+        let archivedMessagesMap = JSON.parse(localStorage.getItem('punk_archived_msgs')) || {};
+        let cachedMessages = [];
+        let cachedUsers = [];
+        let unreadUsers = new Set();
+        let lastMessageCheckCount = {};
+
+        function init() {
+            renderLoginAvatarGrid();
+            if (session) {
+                if (localBannedUsers.has(session.user)) {
+                    showView('chat');
+                    document.getElementById('kick-overlay').classList.remove('hidden');
+                    return;
+                }
+                if (!session.avatar) {
+                    session.avatar = avatarDirectory[session.user] || PUNK_AVATARS[0].id;
+                    localStorage.setItem('cyber_chat_session', JSON.stringify(session));
+                }
+                avatarDirectory[session.user] = session.avatar;
+                localStorage.setItem('punk_avatar_dir', JSON.stringify(avatarDirectory));
+                showView('chat');
+                startApp();
+            } else {
+                showView('login');
+            }
+        }
+
+        function getAvatarObj(avatarId, fallbackUsername = "") {
+            let found = PUNK_AVATARS.find(a => a.id === avatarId);
+            if (!found && fallbackUsername && avatarDirectory[fallbackUsername]) {
+                found = PUNK_AVATARS.find(a => a.id === avatarDirectory[fallbackUsername]);
+            }
+            if (!found && fallbackUsername) {
+                // Pilih avatar konsisten berdasarkan nama user jika belum diset
+                let sum = 0;
+                for (let i = 0; i < fallbackUsername.length; i++) sum += fallbackUsername.charCodeAt(i);
+                found = PUNK_AVATARS[sum % PUNK_AVATARS.length];
+            }
+            return found || PUNK_AVATARS[0];
+        }
+
+        function renderLoginAvatarGrid() {
+            const grid = document.getElementById('login-avatar-grid');
+            if (!grid) return;
+            grid.innerHTML = PUNK_AVATARS.map(av => `
+                <div onclick="selectLoginAvatar('${av.id}')" class="avatar-option p-1.5 flex flex-col items-center ${selectedAvatarId === av.id ? 'selected' : ''}">
+                    <div class="w-10 h-10 border border-black mb-1">${av.svg}</div>
+                    <span class="text-[8px] font-stencil text-white uppercase tracking-tighter">${av.name}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectLoginAvatar(id) {
+            selectedAvatarId = id;
+            renderLoginAvatarGrid();
+        }
+
+        // Modal Ganti Avatar saat sudah login
+        function openAvatarModal() {
+            modalTempAvatarId = (session && session.avatar) ? session.avatar : selectedAvatarId;
+            renderModalAvatarGrid();
+            document.getElementById('avatar-modal').style.display = 'flex';
+        }
+
+        function closeAvatarModal() {
+            document.getElementById('avatar-modal').style.display = 'none';
+        }
+
+        function renderModalAvatarGrid() {
+            const grid = document.getElementById('modal-avatar-grid');
+            if (!grid) return;
+            grid.innerHTML = PUNK_AVATARS.map(av => `
+                <div onclick="selectModalAvatar('${av.id}')" class="avatar-option p-2 flex flex-col items-center ${modalTempAvatarId === av.id ? 'selected' : ''}">
+                    <div class="w-12 h-12 border-2 border-black mb-1">${av.svg}</div>
+                    <span class="text-[9px] font-stencil text-white uppercase">${av.name}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectModalAvatar(id) {
+            modalTempAvatarId = id;
+            renderModalAvatarGrid();
+        }
+
+        async function saveNewAvatar() {
+            if (!session) return;
+            session.avatar = modalTempAvatarId;
+            selectedAvatarId = modalTempAvatarId;
+            localStorage.setItem('cyber_chat_session', JSON.stringify(session));
+
+            avatarDirectory[session.user] = modalTempAvatarId;
+            localStorage.setItem('punk_avatar_dir', JSON.stringify(avatarDirectory));
+
+            updateHeaderProfileUI();
+            closeAvatarModal();
+
+            // Broadcast sinkronisasi profil & avatar ke jaringan agar kru lain melihat perubahan
+            const existingHash = authVault[session.user] || "AVATAR_UPDATE";
+            try {
+                await safeFetch('sendMessage', {
+                    from: session.user,
+                    to: '__AUTH_VAULT__',
+                    text: `LOCK:${existingHash}:AVATAR:${session.avatar}`,
+                    role: session.role
+                });
+            } catch (e) {}
+
+            document.getElementById('messages-display').dataset.state = "";
+            renderUsers(cachedUsers);
+            renderMessages(cachedMessages);
+            showPunkAlert("AVATAR DIPERBARUI", "Lambang profil jalananmu berhasil diganti!", "🎭");
+        }
+
+        // --- DIALOG MODAL KUSTOM (PENGGANTI ALERT & CONFIRM) ---
+        function showPunkAlert(title, message, icon = "⚠️") {
+            const modal = document.getElementById('punk-dialog-modal');
+            document.getElementById('dialog-icon').innerText = icon;
+            document.getElementById('dialog-title').innerText = title;
+            document.getElementById('dialog-message').innerText = message;
+            document.getElementById('dialog-cancel-btn').classList.add('hidden');
+            const okBtn = document.getElementById('dialog-ok-btn');
+            okBtn.innerText = "MENGERTI";
+            okBtn.onclick = () => { modal.style.display = 'none'; };
+            modal.style.display = 'flex';
+        }
+
+        function showPunkConfirm(title, message, onConfirm, icon = "💀") {
+            const modal = document.getElementById('punk-dialog-modal');
+            document.getElementById('dialog-icon').innerText = icon;
+            document.getElementById('dialog-title').innerText = title;
+            document.getElementById('dialog-message').innerText = message;
+            const cancelBtn = document.getElementById('dialog-cancel-btn');
+            const okBtn = document.getElementById('dialog-ok-btn');
+
+            cancelBtn.classList.remove('hidden');
+            okBtn.innerText = "EKSEKUSI!";
+
+            cancelBtn.onclick = () => { modal.style.display = 'none'; };
+            okBtn.onclick = () => {
+                modal.style.display = 'none';
+                if (typeof onConfirm === 'function') onConfirm();
+            };
+            modal.style.display = 'flex';
+        }
+
+        function togglePassVisibility() {
+            const passInput = document.getElementById('login-password');
+            const btn = document.getElementById('toggle-pass-btn');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                btn.innerText = 'SEMBUNYIKAN';
+            } else {
+                passInput.type = 'password';
+                btn.innerText = 'LIHAT';
+            }
+        }
+
+        function simpleHash(str) {
+            let h1 = 0xdeadbeef ^ str.length;
+            let h2 = 0x41c6ce57 ^ str.length;
+            for (let i = 0, ch; i < str.length; i++) {
+                ch = str.charCodeAt(i);
+                h1 = Math.imul(h1 ^ ch, 2654435761);
+                h2 = Math.imul(h2 ^ ch, 1597334677);
+            }
+            h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+            h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+            return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36).toUpperCase();
+        }
+
+        function handleLoginAttempt(role) {
+            const user = document.getElementById('login-username').value.trim().toUpperCase();
+            const pass = document.getElementById('login-password').value;
+
+            if (!user) {
+                showPunkAlert("IDENTITAS KOSONG", "Masukkan Alias / Nama Jalanan terlebih dahulu!", "🎸");
+                return;
+            }
+
+            if (localBannedUsers.has(user)) {
+                showLoginError("AKUN INI TELAH DI-BANNED SECARA PERMANEN OLEH OVERLORD!");
+                return;
+            }
+
+            if (role === 'ADMIN') {
+                document.getElementById('admin-modal').style.display = 'flex';
+                document.getElementById('admin-password-input').focus();
+            } else {
+                if (!pass || pass.length < 4) {
+                    showPunkAlert("SANDI WAJIB DIISI", "Street Punx wajib memasukkan Sandi Rahasia (minimal 4 karakter) untuk mengunci akun secara permanen!", "🔒");
+                    return;
+                }
+                processLogin(user, 'MEMBER', pass);
+            }
+        }
+
+        function showLoginError(msg) {
+            const errorEl = document.getElementById('login-error');
+            errorEl.innerHTML = msg;
+            errorEl.classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').style.display = 'none';
+            document.getElementById('admin-password-input').value = "";
+        }
+
+        function confirmAdminAccess() {
+            const user = document.getElementById('login-username').value.trim().toUpperCase();
+            const pass = document.getElementById('admin-password-input').value;
+
+            if (pass === ADMIN_KEY) {
+                closeAdminModal();
+                processLogin(user, 'ADMIN', pass);
+            } else {
+                showPunkAlert("OTORITAS DITOLAK", "Kode Enkripsi Overlord salah! Akses ditolak.", "🚫");
+                document.getElementById('admin-password-input').value = "";
+            }
+        }
+
+        async function processLogin(user, role, rawPassword) {
+            const errorEl = document.getElementById('login-error');
+            errorEl.classList.add('hidden');
+            const passHash = simpleHash(`${user}::${rawPassword}`);
+
+            try {
+                // Tarik pesan jaringan terlebih dahulu untuk menyinkronkan brankas password & status banned
+                try {
+                    const netMessages = await safeFetch('getMessages');
+                    syncVaultAndBansFromMessages(netMessages);
+                } catch (e) {}
+
+                if (localBannedUsers.has(user)) {
+                    showLoginError("IDENTITAS INI TELAH DI-BANNED PERMANEN DARI JARINGAN!");
+                    return;
+                }
+
+                // Cek apakah alias sudah dikunci dengan password di jaringan atau brankas lokal
+                if (role === 'MEMBER' && authVault[user] && authVault[user] !== passHash) {
+                    showLoginError("SANDI SALAH! ALIAS '" + user + "' SUDAH DIKUNCI OLEH PENGGUNA LAIN.");
+                    return;
+                }
+
+                const res = await safeFetch('login', { user, role, passHash, avatar: selectedAvatarId });
+                if (res && res.success) {
+                    const isNewRegistration = !authVault[user];
+                    authVault[user] = passHash;
+                    localStorage.setItem('punk_auth_vault', JSON.stringify(authVault));
+
+                    avatarDirectory[user] = selectedAvatarId;
+                    localStorage.setItem('punk_avatar_dir', JSON.stringify(avatarDirectory));
+
+                    // Kunci sandi & avatar ke jaringan apabila baru pertama kali bergabung
+                    if (isNewRegistration) {
+                        try {
+                            await safeFetch('sendMessage', {
+                                from: user,
+                                to: '__AUTH_VAULT__',
+                                text: `LOCK:${passHash}:AVATAR:${selectedAvatarId}`,
+                                role: role
+                            });
+                        } catch (e) {}
+                    }
+
+                    session = { user: res.user || user, role: res.role || role, avatar: selectedAvatarId };
+                    localStorage.setItem('cyber_chat_session', JSON.stringify(session));
+                    init();
+                } else if (res && res.error === 'BANNED') {
+                    localBannedUsers.add(user);
+                    saveBannedUsers();
+                    showLoginError("AKUN INI TELAH DI-BANNED SECARA PERMANEN.");
+                } else if (res && res.error === 'WRONG_PASSWORD') {
+                    showLoginError("SANDI SALAH! AKUN INI SUDAH DIKUNCI PERMANEN.");
+                }
+            } catch (err) {
+                showLoginError(`SINKRONISASI GAGAL: ${err.message}`);
+            }
+        }
+
+        function syncVaultAndBansFromMessages(messages) {
+            if (!Array.isArray(messages)) return;
+            let vaultChanged = false;
+            let avatarChanged = false;
+            let banChanged = false;
+
+            messages.forEach(msg => {
+                // Sinkronisasi Kunci Password & Avatar
+                if (msg.to === '__AUTH_VAULT__' && typeof msg.text === 'string' && msg.text.startsWith('LOCK:')) {
+                    const parts = msg.text.split(':');
+                    const hash = parts[1];
+                    const avIdx = parts.indexOf('AVATAR');
+                    const avId = avIdx !== -1 ? parts[avIdx + 1] : null;
+
+                    if (msg.from && hash && !authVault[msg.from] && hash !== 'AVATAR_UPDATE') {
+                        authVault[msg.from] = hash;
+                        vaultChanged = true;
+                    }
+                    if (msg.from && avId) {
+                        avatarDirectory[msg.from] = avId;
+                        avatarChanged = true;
+                    }
+                }
+                // Sinkronisasi Perintah Banned dari Overlord
+                if (msg.to === '__SYSTEM_BAN__' && typeof msg.text === 'string' && msg.text.startsWith('BAN:')) {
+                    const targetUser = msg.text.replace('BAN:', '').trim();
+                    if (targetUser && !localBannedUsers.has(targetUser)) {
+                        localBannedUsers.add(targetUser);
+                        banChanged = true;
+                    }
+                }
+            });
+
+            if (vaultChanged) localStorage.setItem('punk_auth_vault', JSON.stringify(authVault));
+            if (avatarChanged) localStorage.setItem('punk_avatar_dir', JSON.stringify(avatarDirectory));
+            if (banChanged) saveBannedUsers();
+        }
+
+        function saveBannedUsers() {
+            localStorage.setItem('punk_banned_users', JSON.stringify(Array.from(localBannedUsers)));
+        }
+
+        function updateHeaderProfileUI() {
+            if (!session) return;
+            document.getElementById('active-user-display').innerText = session.user;
+            const avObj = getAvatarObj(session.avatar, session.user);
+            const avBox = document.getElementById('active-user-avatar');
+            if (avBox) avBox.innerHTML = avObj.svg;
+
+            const rBadge = document.getElementById('role-badge');
+            if (session.role === 'ADMIN') {
+                rBadge.innerText = '👑 OVERLORD';
+                rBadge.className = 'text-[9px] font-stencil px-2 py-0.5 border border-black uppercase bg-[#ff0055] text-white';
+                document.getElementById('admin-chart-panel').classList.remove('hidden');
+                document.getElementById('overlord-archive-badge').classList.remove('hidden');
+                document.getElementById('btn-toggle-archive').classList.add('hidden');
+                document.getElementById('btn-archive-channel').classList.add('hidden');
+            } else {
+                rBadge.innerText = '🎸 STREET PUNX';
+                rBadge.className = 'text-[9px] font-stencil px-2 py-0.5 border border-black uppercase bg-[#ffea00] text-black';
+                document.getElementById('overlord-archive-badge').classList.add('hidden');
+                document.getElementById('btn-toggle-archive').classList.remove('hidden');
+                document.getElementById('btn-archive-channel').classList.remove('hidden');
+            }
+        }
+
+        function startApp() {
+            updateHeaderProfileUI();
+            if (session.role === 'ADMIN') {
+                initChart();
+            }
+            updateArchiveBadgeCount();
+            sync();
+            setInterval(sync, 4000);
+            setInterval(heartbeat, 8000);
+        }
+
+        async function heartbeat() {
+            if (!session) return;
+            if (localBannedUsers.has(session.user)) {
+                document.getElementById('kick-overlay').classList.remove('hidden');
+                return;
+            }
+            try {
+                const res = await safeFetch('heartbeat', { user: session.user });
+                if (res && (res.status === 'kicked' || res.error === 'BANNED')) {
+                    localBannedUsers.add(session.user);
+                    saveBannedUsers();
+                    document.getElementById('kick-overlay').classList.remove('hidden');
+                }
+            } catch (e) {}
+        }
+
+        async function sync() {
+            if (isSyncing || !session) return;
+            isSyncing = true;
+            try {
+                const [users, messages] = await Promise.all([
+                    safeFetch('getUsers'),
+                    safeFetch('getMessages')
+                ]);
+
+                if (Array.isArray(messages)) {
+                    syncVaultAndBansFromMessages(messages);
+                    cachedMessages = messages;
+                }
+
+                if (localBannedUsers.has(session.user)) {
+                    document.getElementById('kick-overlay').classList.remove('hidden');
+                    return;
+                }
+
+                if (Array.isArray(users)) {
+                    cachedUsers = users;
+                }
+
+                checkNewMessages(cachedMessages);
+                renderUsers(cachedUsers);
+                renderMessages(cachedMessages);
+
+                if (session.role === 'ADMIN') updateChart(cachedUsers);
+            } catch (e) {
+                console.warn("Sinkronisasi tertunda, mencoba ulang...");
+            } finally {
+                isSyncing = false;
+            }
+        }
+
+        function checkNewMessages(messages) {
+            if (!Array.isArray(messages)) return;
+            const currentCounts = {};
+            messages.forEach(msg => {
+                if (msg.to === '__AUTH_VAULT__' || msg.to === '__SYSTEM_BAN__') return;
+                if (msg.to === session.user) {
+                    currentCounts[msg.from] = (currentCounts[msg.from] || 0) + 1;
+                }
+            });
+
+            Object.keys(currentCounts).forEach(sender => {
+                const prevCount = lastMessageCheckCount[sender] || 0;
+                if (currentCounts[sender] > prevCount && selectedRecipient !== sender) {
+                    unreadUsers.add(sender);
+                }
+                lastMessageCheckCount[sender] = currentCounts[sender];
+            });
+        }
+
+        function renderUsers(users) {
+            if (!Array.isArray(users)) return;
+            const desktopContainer = document.getElementById('user-list-container');
+            const mobileContainer = document.getElementById('mobile-user-list-container');
+
+            // Filter user yang sudah di-banned
+            const activeUsers = users.filter(u => !localBannedUsers.has(u.user));
+            let online = 0;
+
+            const globalBtnHtml = `
+                <button onclick="setRecipient('GLOBAL'); toggleMobileCrew(false);" class="w-full p-3.5 border-2 text-left text-xs font-punk-title uppercase transition-all mb-2 flex items-center justify-between ${selectedRecipient === 'GLOBAL' ? 'bg-[#ffea00] text-black border-black shadow-[4px_4px_0_#ff0055]' : 'bg-[#181818] text-white border-neutral-700 hover:border-[#ffea00]'}">
+                    <span>📢 PANGGUNG UTAMA (GLOBAL)</span>
+                    <span class="text-[9px] font-zine px-1.5 py-0.5 bg-black text-[#00ff66]">PUBLIK</span>
+                </button>
+            `;
+
+            let listHtml = globalBtnHtml;
+
+            activeUsers.forEach(u => {
+                if (u.online) online++;
+                if (u.user === session.user) return;
+
+                const isActive = selectedRecipient === u.user;
+                const hasNewMsg = unreadUsers.has(u.user);
+                const avObj = getAvatarObj(u.avatar, u.user);
+
+                listHtml += `
+                    <div onclick="setRecipient('${u.user}'); toggleMobileCrew(false);" class="p-3 border-2 transition-all cursor-pointer flex justify-between items-center ${isActive ? 'bg-[#222] border-[#00ff66] shadow-[4px_4px_0_#ffea00]' : 'bg-[#141414] border-neutral-800 hover:border-neutral-600'}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="relative">
+                                <div class="w-10 h-10 border-2 border-black overflow-hidden bg-black">${avObj.svg}</div>
+                                <span class="absolute -bottom-1 -right-1 w-3 h-3 border border-black ${u.online ? 'bg-[#00ff66]' : 'bg-neutral-600'}"></span>
+                            </div>
+                            <div class="truncate">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-punk-title text-white uppercase truncate">${u.user}</span>
+                                    ${hasNewMsg ? '<span class="text-[8px] bg-[#ff0055] text-white px-1.5 py-0.5 border border-black font-stencil">BARU!</span>' : ''}
+                                </div>
+                                <div class="text-[9px] font-zine ${u.role === 'ADMIN' ? 'text-[#ff0055]' : 'text-neutral-400'} uppercase">
+                                    ${u.role === 'ADMIN' ? '👑 OVERLORD' : '🎸 STREET PUNX'}
+                                </div>
+                            </div>
+                        </div>
+                        ${session.role === 'ADMIN' ? `
+                            <button onclick="kickUser(event, '${u.user}')" class="px-2.5 py-1.5 bg-[#ff0055] text-white border-2 border-black font-stencil text-[9px] uppercase hover:bg-white hover:text-black shadow-[2px_2px_0_#ffea00]">
+                                BANNED 💀
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            if (desktopContainer) desktopContainer.innerHTML = listHtml;
+            if (mobileContainer) mobileContainer.innerHTML = listHtml;
+            document.getElementById('online-count').innerText = online;
+            const mobCount = document.getElementById('mobile-online-count');
+            if (mobCount) mobCount.innerText = online;
+        }
+
+        function toggleMobileCrew(show) {
+            const drawer = document.getElementById('mobile-crew-drawer');
+            if (!drawer) return;
+            drawer.style.display = show ? 'flex' : 'none';
+        }
+
+        function getMsgSignature(msg) {
+            return `${msg.from}||${msg.to}||${msg.timestamp}||${msg.text}`;
+        }
+
+        function getUserArchivedSet() {
+            if (!session) return new Set();
+            const arr = archivedMessagesMap[session.user] || [];
+            return new Set(arr);
+        }
+
+        function saveUserArchivedSet(setObj) {
+            if (!session) return;
+            archivedMessagesMap[session.user] = Array.from(setObj);
+            localStorage.setItem('punk_archived_msgs', JSON.stringify(archivedMessagesMap));
+            updateArchiveBadgeCount();
+        }
+
+        function updateArchiveBadgeCount() {
+            const countEl = document.getElementById('archived-count');
+            if (!countEl || !session) return;
+            const setObj = getUserArchivedSet();
+            countEl.innerText = setObj.size;
+        }
+
+        function toggleShowArchived() {
+            showArchivedMessages = !showArchivedMessages;
+            const btn = document.getElementById('btn-toggle-archive');
+            if (showArchivedMessages) {
+                btn.className = "px-2.5 py-1 bg-[#ffea00] border border-black text-black font-stencil text-[10px] uppercase";
+                btn.innerHTML = `📂 SEMBUNYIKAN ARSIP (<span id="archived-count">${getUserArchivedSet().size}</span>)`;
+            } else {
+                btn.className = "px-2.5 py-1 bg-neutral-900 border border-[#ffea00] text-[#ffea00] font-zine text-[10px] uppercase hover:bg-[#ffea00] hover:text-black";
+                btn.innerHTML = `📦 LIHAT ARSIP (<span id="archived-count">${getUserArchivedSet().size}</span>)`;
+            }
+            document.getElementById('messages-display').dataset.state = "";
+            renderMessages(cachedMessages);
+        }
+
+        function toggleArchiveSingleMessage(encodedSig) {
+            const sig = decodeURIComponent(encodedSig);
+            const setObj = getUserArchivedSet();
+            if (setObj.has(sig)) {
+                setObj.delete(sig);
+            } else {
+                setObj.add(sig);
+            }
+            saveUserArchivedSet(setObj);
+            document.getElementById('messages-display').dataset.state = "";
+            renderMessages(cachedMessages);
+        }
+
+        function archiveCurrentChannelMessages() {
+            if (!session || session.role === 'ADMIN') return;
+            const relevant = getChannelMessages(cachedMessages);
+            if (relevant.length === 0) {
+                showPunkAlert("TIDAK ADA PESAN", "Belum ada percakapan di saluran ini untuk diarsipkan.", "📭");
+                return;
+            }
+            showPunkConfirm(
+                "ARSIPKAN SALURAN INI?",
+                "Semua pesan yang tampil saat ini akan dipindahkan ke Arsip pribadimu untuk menghemat beban tampilan.\n\n(Catatan: Pesan TIDAK terhapus dari jaringan dan Overlord tetap dapat mengakses seluruh riwayat).",
+                () => {
+                    const setObj = getUserArchivedSet();
+                    relevant.forEach(m => setObj.add(getMsgSignature(m)));
+                    saveUserArchivedSet(setObj);
+                    document.getElementById('messages-display').dataset.state = "";
+                    renderMessages(cachedMessages);
+                },
+                "📥"
+            );
+        }
+
+        function getChannelMessages(messages) {
+            if (!Array.isArray(messages)) return [];
+            return messages.filter(msg => {
+                // Sembunyikan pesan sistem internal
+                if (msg.to === '__AUTH_VAULT__' || msg.to === '__SYSTEM_BAN__') return false;
+
+                if (selectedRecipient === 'GLOBAL') {
+                    return msg.to === 'GLOBAL';
+                } else {
+                    const involveSelected = (msg.from === selectedRecipient || msg.to === selectedRecipient);
+                    const involveMe = (msg.from === session.user || msg.to === session.user);
+                    if (session.role === 'ADMIN') return involveSelected;
+                    return involveSelected && involveMe;
+                }
+            });
+        }
+
+        function renderMessages(messages) {
+            if (!Array.isArray(messages)) return;
+            const box = document.getElementById('messages-display');
+            const channelMsgs = getChannelMessages(messages);
+            const archivedSet = getUserArchivedSet();
+
+            // Jika member biasa dan tidak sedang membuka arsip, saring pesan yang diarsipkan
+            const visibleMsgs = channelMsgs.filter(msg => {
+                if (session.role === 'ADMIN') return true; // Overlord selalu melihat 100% riwayat
+                const isArchived = archivedSet.has(getMsgSignature(msg));
+                return showArchivedMessages ? true : !isArchived;
+            });
+
+            const stateHash = `${selectedRecipient}_${showArchivedMessages}_${archivedSet.size}_${visibleMsgs.length}_${visibleMsgs[visibleMsgs.length - 1]?.text || ""}_${JSON.stringify(avatarDirectory)}`;
+            if (box.dataset.state === stateHash) return;
+            box.dataset.state = stateHash;
+
+            box.innerHTML = "";
+            if (visibleMsgs.length === 0) {
+                box.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-center p-6">
+                        <div class="text-4xl mb-2">📻</div>
+                        <div class="text-xs font-punk-title text-[#ffea00] uppercase tracking-widest">BELUM ADA TRANSMISI DI LAYAR</div>
+                        <p class="text-[10px] font-zine text-neutral-400 mt-1">Riwayat percakapan aman. Gunakan tombol 'LIHAT ARSIP' jika ada pesan yang kamu arsipkan.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            visibleMsgs.forEach(msg => {
+                const isMe = msg.from === session.user;
+                const fromAdmin = msg.role === 'ADMIN';
+                const isPrivate = msg.to !== 'GLOBAL';
+                const sig = getMsgSignature(msg);
+                const encodedSig = encodeURIComponent(sig);
+                const isArchived = archivedSet.has(sig);
+                const avObj = getAvatarObj(msg.avatar, msg.from);
+
+                const html = `
+                    <div class="flex gap-3 ${isMe ? 'flex-row-reverse' : 'flex-row'} items-end">
+                        <!-- Avatar Pengirim -->
+                        <div class="w-10 h-10 border-2 border-black bg-black flex-shrink-0 shadow-[3px_3px_0_#000] overflow-hidden" title="${msg.from}">
+                            ${avObj.svg}
+                        </div>
+
+                        <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%] sm:max-w-[70%]">
+                            <div class="flex flex-wrap items-center gap-2 mb-1 px-1">
+                                <span class="text-[11px] font-punk-title uppercase ${fromAdmin ? 'text-[#ff0055]' : 'text-[#ffea00]'}">
+                                    ${msg.from} ${fromAdmin ? '👑' : ''}
+                                </span>
+                                <span class="text-[9px] text-neutral-400 font-zine">${msg.timestamp || ''}</span>
+                                ${isPrivate ? `<span class="text-[8px] bg-[#ff0055] text-white px-1.5 py-0.5 border border-black font-stencil uppercase">PRIVAT ➔ ${msg.to}</span>` : ''}
+                                ${isArchived ? `<span class="text-[8px] bg-neutral-700 text-[#ffea00] px-1.5 py-0.5 border border-[#ffea00] font-stencil uppercase">DIARSIPKAN</span>` : ''}
+
+                                <!-- Tombol Arsipkan per-pesan untuk Member -->
+                                ${session.role !== 'ADMIN' ? `
+                                    <button onclick="toggleArchiveSingleMessage('${encodedSig}')" class="text-[9px] font-zine underline ${isArchived ? 'text-[#00ff66]' : 'text-neutral-400 hover:text-[#ffea00]'}">
+                                        ${isArchived ? '[PULIHKAN]' : '[ARSIPKAN]'}
+                                    </button>
+                                ` : ''}
+
+                                <!-- Tombol Banned Cepat untuk Overlord -->
+                                ${session.role === 'ADMIN' && !isMe ? `
+                                    <button onclick="kickUser(event, '${msg.from}')" class="text-[8px] bg-[#ff0055] text-white px-1.5 py-0.5 border border-black font-stencil uppercase hover:bg-white hover:text-black">
+                                        BANNED 💀
+                                    </button>
+                                ` : ''}
+                            </div>
+
+                            <div class="p-3.5 text-xs sm:text-sm font-zine leading-relaxed break-words border-2 border-black ${
+                                isMe 
+                                    ? 'bg-[#ffea00] text-black shadow-[4px_4px_0_#ff0055]' 
+                                    : (fromAdmin ? 'bg-[#ff0055] text-white shadow-[4px_4px_0_#ffea00]' : 'bg-[#1a1a1a] text-white border-[#00ff66] shadow-[4px_4px_0_#000]')
+                            }">
+                                ${msg.text}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                box.insertAdjacentHTML('beforeend', html);
+            });
+            box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text || !session) return;
+
+            input.value = "";
+            try {
+                await safeFetch('sendMessage', {
+                    from: session.user,
+                    to: selectedRecipient,
+                    text: text,
+                    role: session.role
+                });
+                sync();
+            } catch (err) {
+                showPunkAlert("GAGAL MENGIRIM", "Transmisi terputus. Periksa koneksi jaringanmu!", "📡");
+            }
+        }
+
+        async function kickUser(e, target) {
+            if (e) e.stopPropagation();
+            if (!target || target === session.user) return;
+
+            showPunkConfirm(
+                `BANNED & KICK ${target}?`,
+                `Tindakan ini akan memutus akses jaringan ${target} secara permanen.\n\n(Sesuai protokol keamanan baru, riwayat percakapan tetap tersimpan untuk audit Overlord).`,
+                async () => {
+                    localBannedUsers.add(target);
+                    saveBannedUsers();
+
+                    if (selectedRecipient === target) {
+                        setRecipient('GLOBAL');
+                    }
+
+                    renderUsers(cachedUsers);
+
+                    try {
+                        await Promise.all([
+                            safeFetch('kick', { target: target, user: target }),
+                            safeFetch('sendMessage', {
+                                from: session.user,
+                                to: '__SYSTEM_BAN__',
+                                text: `BAN:${target}`,
+                                role: session.role
+                            })
+                        ]);
+                    } catch (err) {}
+
+                    sync();
+                    showPunkAlert("TARGET DI-BANNED", `Identitas ${target} telah diblokir dari daftar kru aktif!`, "💀");
+                }
+            );
+        }
+
+        function setRecipient(name) {
+            selectedRecipient = name;
+            if (unreadUsers.has(name)) {
+                unreadUsers.delete(name);
+            }
+
+            const rBox = document.getElementById('replying-box');
+            const rName = document.getElementById('reply-name');
+            const headerName = document.getElementById('current-room-name');
+
+            if (name !== 'GLOBAL') {
+                rBox.classList.remove('hidden');
+                rName.innerText = name;
+                headerName.innerText = "🔒 JALUR PRIVAT: " + name;
+                headerName.className = "text-xs sm:text-sm font-punk-title text-[#ff0055] uppercase";
+            } else {
+                rBox.classList.add('hidden');
+                headerName.innerText = "📢 PANGGUNG UTAMA (GLOBAL)";
+                headerName.className = "text-xs sm:text-sm font-punk-title text-[#00ff66] uppercase";
+            }
+            document.getElementById('messages-display').dataset.state = "";
+            renderUsers(cachedUsers);
+            renderMessages(cachedMessages);
+        }
+
+        function cancelReply() {
+            setRecipient('GLOBAL');
+        }
+
+        async function safeFetch(action, params = {}) {
+            const url = new URL(WEB_APP_URL);
+            url.searchParams.set('action', action);
+            for (let k in params) url.searchParams.set(k, params[k]);
+            url.searchParams.set('_t', Date.now());
+
+            const res = await fetch(url.toString(), {
+                method: 'GET',
+                mode: 'cors',
+                cache: 'no-cache'
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return await res.json();
+        }
+
+        function showView(id) {
+            document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + id).classList.add('active');
+        }
+
+        function clearSession() {
+            localStorage.removeItem('cyber_chat_session');
+            location.reload();
+        }
+
+        function initChart() {
+            const canvas = document.getElementById('loadChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            loadChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Online', 'Offline'],
+                    datasets: [{
+                        data: [1, 0],
+                        backgroundColor: ['#00ff66', '#262626'],
+                        borderColor: '#000000',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    cutout: '75%'
+                }
+            });
+        }
+
+        function updateChart(users) {
+            if (!loadChart || !Array.isArray(users)) return;
+            const validUsers = users.filter(u => !localBannedUsers.has(u.user));
+            const online = validUsers.filter(u => u.online).length;
+            const total = validUsers.length;
+            loadChart.data.datasets[0].data = [online, Math.max(0, total - online)];
+            loadChart.update();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
